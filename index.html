@@ -1,35 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Button and Text Layout</title>
+    <title>GPT4All Chat</title>
     <style>
-        body {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-        }
-
-        .text {
-            position: absolute;
-            top: 20%;
-            font-size: 24px;
-        }
-
-        .button {
-            padding: 10px 20px;
-            font-size: 18px;
-            cursor: pointer;
-        }
+        body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+        textarea { width: 100%; height: 100px; }
+        button { padding: 10px 20px; margin-top: 10px; }
+        pre { background: #f4f4f4; padding: 15px; white-space: pre-wrap; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
-<div class="text">This is some text at the top</div>
-<button class="button">Click Me</button>
+<h2>SUMMARISE</h2>
+
+<textarea id="prompt" placeholder=
+"Enter your prompt here...
+
+If you don't enter anything, you may be given a very weird sentence."></textarea><br>
+<button onclick="sendPrompt()">Send</button>
+
+<h3>Response:</h3>
+<pre id="response">Waiting for input...</pre>
+
+<script>
+    async function sendPrompt() {
+        const prompt = document.getElementById("prompt").value;
+        const responseEl = document.getElementById("response");
+        responseEl.textContent = "Attempting to summarise...";
+
+        try {
+            const res = await fetch("http://10.130.166.3:5000/api/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ prompt })
+            });
+
+            const data = await res.json();
+            responseEl.textContent = data.response;
+        } catch (err) {
+            responseEl.textContent = "Error: " + err.message;
+        }
+    }
+</script>
 </body>
 </html>
-
